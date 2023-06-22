@@ -1,0 +1,121 @@
+# Programme to allow user to either write equations or read data from a file.
+# Option a) request 2 numbers and a mathematical operator from user to generate an equation.
+# All equations generated during session are stored in a new or cleared "equations_file" text file.
+# Defensive programming in place to validate user input for each number and the operator.
+# Option b) requests user to input file name and prints the contents of the file.
+# Defensive programming in place to validate user input for the file name.
+
+print("Ahoy there! What do you want to do?\n")
+equations_file = open('equations.txt', 'a+')
+i = 0
+# Loop with options for which task the user wants to do begins.
+# Ends by valid choice input, or 4 consecutive false inputs.
+while (i < 5):
+  i += 1
+  print("\na \t- Enter a new equation.")
+  print("\nb \t- See the equations from a text file.")
+  print("\nc \t- End here.")
+  option = input()
+
+  # Code for entering equations to a text file starts.
+  if option.lower() == "a":
+  
+    # Defensive programming loop against invalid number causing an error.
+    while True:
+      try: 
+        number1 = int(input("\nPlease input a number: "))
+        break
+      except ValueError:
+        print("\nSorry I can't use that.\n")
+        
+    # Defensive programming loop against invalid second number causing an error.
+    while True:
+      try: 
+        number2 = int(input("Please input a second number: "))
+        break
+      except ValueError:
+        print("\nI don't think that was a number.\n")
+      
+    operators_list = ["+", "-", "*", "/"]
+    a = 0
+    # Loop begins for valid operator input for the equation
+    # Forced end if user has 4 consecutive false inputs.
+    while a < 5:
+      operator = input("Please input the operator for this equation -\n+  -  *  / \n")
+      a += 1
+      # Defensive programming for user having divide by zero and hitting an error.
+      if operator == "/":
+        try:
+          sum = number1 / number2
+        except ZeroDivisionError:
+          print("\nSorry, you can't divide by zero here, please try a different operator.\n")
+        else:
+          operator = "/"
+          break
+      # Defensive programming ends for user having divide by zero and hitting an error.
+      
+      elif operator in operators_list:
+        break
+      
+      elif a <= 4:
+        print("\nOperator input error, please try again.\n")
+      
+      else:
+        a = 5
+    # Loop for valid operator input for the equation ends.
+        
+    # If operator input is valid, the equation is defined, printed and added to the file.
+    if a < 5:
+      if operator == "+":
+        sum = number1 + number2
+      elif operator == "-":
+        sum = number1 - number2
+      elif operator == "*":
+        sum = number1 * number2
+      else:
+         sum = number1 / number2
+      print(f"\nYour equation is:\n{number1} {operator} {number2} = {sum}")
+      equations_file.write(f"{number1} {operator} {number2} = {sum}\n")
+      print("\n\nWhat's next?")
+    
+    else:
+      i = 5
+      option = "x"
+  # Code for entering equations to a text file ends.
+
+  # Code for opening and printing the contents of a text file starts.
+  elif option.lower() == "b":
+    equations_file.close()
+    file_name = input("\nPlease enter the file name with the extension.\n")
+    contents = ""
+    file = None
+    try:
+      file = open(file_name, 'r')
+      contents = ""
+      for line in file:
+        contents += line
+      print(contents)
+      print("\n\nWhat's next?")
+    except FileNotFoundError:
+      print("\nThe file that you are trying to open does not exits.\n")
+    finally: 
+      if file is not None:
+        file.close()
+  # Code for opening and printing the contents of a text file ends.  
+
+  # User opts to exit.  
+  elif option.lower() == "c":
+    i = 5
+    break
+
+  # User maxes out invalid inputs and is forced to exit.
+  elif i <= 4:
+    print("\nSorry, that's not a valid entry, please try again.\n")
+  
+  else:
+    i = 5
+
+else:
+  print ("\n\nIt seems you're having trouble so we'll stop here.")
+# Loop with options for which task the user wants to do ends. 
+equations_file.close()
